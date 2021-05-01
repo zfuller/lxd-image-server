@@ -1,3 +1,9 @@
+lxd-image-server (0.0.5-focal-1) focal; urgency=medium
+
+  * update Dockerfile for focal support
+
+ -- Zac Fuller <zfuller@users.noreply.github.com>  Wed, 28 April 2021 18:00:00 -0700
+
 lxd-image-server (0.0.4) Ubuntu; urgency=medium
 
   * [2ce586a0] add remote config to replace url

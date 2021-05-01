@@ -56,8 +56,8 @@ class TestIndex(object):
         }
         index = Index()
         index.add('product1')
-        index.add('iats:xenial:amd64:default')
-        index.delete('iats:xenial:amd64:default')
+        index.add('iats:focal:amd64:default')
+        index.delete('iats:focal:amd64:default')
         out = json.loads(index.to_json())
         assert_that(out, is_(equal_to(INDEX)))
 
@@ -74,7 +74,7 @@ class TestIndex(object):
             }
         }
         index = Index()
-        index.add('iats:xenial:amd64:default')
-        index.delete('iats:xenial:amd64:default')
+        index.add('iats:focal:amd64:default')
+        index.delete('iats:focal:amd64:default')
         out = json.loads(index.to_json())
         assert_that(out, is_(equal_to(INDEX)))

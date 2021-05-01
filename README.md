@@ -1,13 +1,12 @@
-Lxd-image-server
-================
+# Lxd-image-server
+
 [![Build Status](https://travis-ci.org/Avature/lxd-image-server.svg?branch=master)](https://travis-ci.org/Avature/lxd-image-server)
 
 Creates and manages a simplestreams lxd image server on top of nginx.
 If installed as a debian package, a new service is created and it monitors
 if there are any changes in the image directory and updates json files.
 
-Requirements
-------------
+## Requirements
 
 * Python: Version 3.5.2 or higher.
 
@@ -15,14 +14,13 @@ Requirements
 
 * OpenSSL
 
-Building the debian package
----------------------------
+## Building the debian package
 
 ### Building the package ###
 
-To build lxd-image-server, first, install the build dependecies:
+To build lxd-image-server, first, install the build dependencies:
 
-```bash
+```sh
 # debhelper >= 9
 # dh-virtualenv >= 9
 apt-get install debhelper dh-exec python3 python-dev dh-virtualenv
@@ -30,7 +28,7 @@ apt-get install debhelper dh-exec python3 python-dev dh-virtualenv
 
 Then build the package:
 
-```bash
+```sh
 dpkg-buildpackage -us -uc -b
 ```
 
@@ -38,40 +36,41 @@ dpkg-buildpackage -us -uc -b
 
 To build lxd-image-server itself in a Docker container, call docker build:
 
-```bash
+```sh
 docker build --tag lxd-image-server-builder .
 ```
 
-This will build the DEB package for Ubuntu Bionic by default. Add e.g.
---build-arg distro=ubuntu:xenial to build for Ubuntu Xenial.
+This will build the DEB package for Ubuntu focal by default. Add e.g.
+--build-arg distro=ubuntu:focal to build for Ubuntu focal.
 
 The resulting files must be copied out of the build container, using these
 commands:
 
-```bash
-mkdir -p dist && docker run --rm lxd-image-server-builder tar -C /dpkg -c . | tar -C dist -xv
+```sh
+docker run --rm lxd-image-server-builder tar -C /dpkg -c . | tar -C dist -xv
 ```
 
-Installation
-------------
+## Installation
+
 
 ### From debian package (recommended) ###
 
-The debian package will automatically copy the source files, create the user lxdadm
+The debian package that you have built will automatically copy the source files, create the user lxdadm
 to upload the files and setup the nginx server with its configuration (included a
 self signed ssl certificate).
 
-* **Install from repository**:
+#### Install using dpkg
 
+```sh
+dpkg -i lxd-image-server_0.0.4~focal_all.deb
+```
+#### Install from a repository
+Note this method requires you to have uploaded your built package to a repo or requires the repo maintainer to have this package available
 ```sh
 apt-get install lxd-image-server
 ```
 
-* **Install using dpkg**:
 
-```sh
-dpkg -i lxd-image-server_0.0.1~xenial_all.deb
-```
 
 After the installation of the package, a rsa key has to be generated at
 /home/lxdadm/.ssh to control the upload of images:
@@ -113,7 +112,7 @@ upload new images to the master.
 
 The configuration file would be:
 
-```yaml
+```toml
 [mirrors]
   [mirror1]
   user = "lxdadm"
@@ -131,25 +130,25 @@ directory and update all the required metadata. No further commands are needed.
 This is the structure the simplestreams server needs to have.
 
 ```
-- /var/www                                         # document root
+- /var/www                                          # document root
         `- simplestreams
-           |- images                               # images folder
-           |  `- iats                              # environment
-           |     `- xenial                         # release
-           |        `- amd64                       # architecture
-           |           `- default                  # box type
-           |              `- 20180716_12:00        # version 1
-           |                 |- lxd.tar.xz         # index and templates
-           |                 `- rootfs.squashfs    # rootfs of container
-           `- streams
+            |- images                               # images folder
+            |  `- ubuntu                            # operating system
+            |     `- focal                          # release
+            |        `- amd64                       # architecture
+            |           `- default                  # box type
+            |              `- 20180716_12:00        # version 1
+            |                 |- lxd.tar.xz         # index and templates
+            |                 `- rootfs.squashfs    # rootfs of container
+            `- streams
               `- v1
-                 |- index.json                     # index of products
-                 `- images.json                    # info with versions of products
+                  |- index.json                     # index of products
+                  `- images.json                    # info with versions of products
 ```
 
 The command `lxd-image-server` can be used to manage the server manually:
 
-```sh
+```
 Usage: lxd-image-server [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -169,7 +168,7 @@ Default paths:
 ### Logging configuration
 
 The logging via configuration. The default configuration is defined
-[here](lxd_image_server/default_config.toml).
+[here](config.toml).
 
 ### Subcommands ###
 
@@ -196,37 +195,57 @@ How to use my new server?
 
 Once your own image server is running, you can add it as new remote on lxc:
 
-```bash
-lxc remote add <name> <url> --protocol=simplestreams
+```sh
+lxc remote add $remote_name $lxc_image_server_url --protocol=simplestreams
 ```
 
-Remember add the certificate:
+### self-signed certificate ###
 
-```bash
-openssl s_client -showcerts -connect <url>:443 </dev/null 2>/dev/null | openssl x509 -outform PEM > my-lxd-image-server.cert
+Remember add the certificate on the lxc server
+
+```sh
+# download the self-signed ssl cert
+openssl s_client -showcerts -connect $lxc_image_server_url:8443 </dev/null 2>/dev/null | openssl x509 -outform PEM > my-lxd-image-server.cert
+
+# add it to your certificate authorities
 cp my-lxc-image-server.cert /user/local/share/ca-certificates
+
+# update
 update-ca-certificates
+
+# restart service
 systemctl restart lxd
 ```
 
-Also, you can use https://letsencrypt.org/ and makes easier use your server.
+### Lets Encrypt ###
+Let's Encrypt can also be used as a signed alternative to your server https://letsencrypt.org/
+Once the Let's Encrypt cert is created ensure it's in the following paths
+
+```
+/etc/nginx/ssl/nginx.crt;
+/etc/nginx/ssl/nginx.key;
+```
+
+or update [/etc/nginx/sites-available/simplestreams.conf](resources/nginx/simplestreams.conf) and update
+`ssl_certificate` and `ssl_certificate_key` to match the path of the certificate and key.
+
 
 ### Publish a new image ###
 
-Now, any client can create a image container and publish it on the master server. [Here]9https://ubuntu.com/blog/publishing-lxd-images):
+Now, any client can create an image container and publish it on the master server. [Here](https://ubuntu.com/blog/publishing-lxd-images):
 
-```bash
-lxc launch lxc:ubuntu/bionic/amd64 n1
+```sh
+lxc launch lxc:ubuntu/focal/amd64 n1
 lxc exec n1 -- apt-get -y install vim
 lxc stop n1
-lxc publish --public n1 --alias=bionic-vim
-lxc image copy bionic-vim <url>
+lxc publish --public n1 --alias=focal-vim
+lxc image copy focal-vim <url>
 ```
 
 Now, you can use your image in a new container
 
-```bash
-lxc launch bionic-vim ntest
+```sh
+lxc launch focal-vim ntest
 lxc exec ntest -- vim -c "smile"
 ```
 

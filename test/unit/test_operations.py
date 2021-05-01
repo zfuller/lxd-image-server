@@ -11,13 +11,13 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             Path(path, 'rootfs.squashfs').touch()
             events = [
                 (None, ['IN_ISDIR', 'IN_CREATE'], str(Path(path).parent),
-                    '20180710_12:00'),
+                    '20210430_12:00'),
                 (None, ['IN_CLOSE_WRITE'], path, 'lxd.tar.xz'),
                 (None, ['IN_CLOSE_WRITE'], path, 'rootfs.squashfs')
             ]
@@ -31,7 +31,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             Path(path, 'rootfs.squashfs').touch()
@@ -39,7 +39,7 @@ class TestOperations(object):
                 (None, ['IN_CLOSE_WRITE'], path, 'lxd.tar.xz'),
                 (None, ['IN_CLOSE_WRITE'], path, 'rootfs.squashfs'),
                 (None, ['IN_ISDIR', 'IN_ATTRIB'], str(Path(path).parent),
-                    '20180710_12:00'),
+                    '20210430_12:00'),
                 (None, ['IN_ISDIR', 'IN_ATTRIB'],
                     str(Path(path).parent.parent), 'default')
             ]
@@ -53,7 +53,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default'))
+                Path(tmpdir, 'iats/focal/amd64/default'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             Path(path, 'rootfs.squashfs').touch()
@@ -68,7 +68,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             Path(path, 'rootfs.squashfs').touch()
@@ -86,18 +86,18 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default'))
+                Path(tmpdir, 'iats/focal/amd64/default'))
             os.makedirs(path)
             events = [
-                (None, ['IN_DELETE'], path + '/20180710_12:00', 'lxd.tar.xz'),
-                (None, ['IN_DELETE'], path + '/20180710_12:00',
+                (None, ['IN_DELETE'], path + '/20210430_12:00', 'lxd.tar.xz'),
+                (None, ['IN_DELETE'], path + '/20210430_12:00',
                     'rootfs.squashfs'),
-                (None, ['IN_ISDIR', 'IN_DELETE'], path, '20180710_12:00')
+                (None, ['IN_ISDIR', 'IN_DELETE'], path, '20210430_12:00')
             ]
             operations = Operations(events, tmpdir)
             assert len(operations.ops) == 1
             assert any(
-                Operation(path + '/20180710_12:00',
+                Operation(path + '/20210430_12:00',
                           OperationType.DELETE, tmpdir) == k
                 for k in operations.ops)
 
@@ -105,17 +105,17 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default'))
+                Path(tmpdir, 'iats/focal/amd64/default'))
             os.makedirs(path)
             events = [
-                (None, ['IN_DELETE'], path + '/20180710_12:00', 'lxd.tar.xz'),
-                (None, ['IN_DELETE'], path + '/20180710_12:00',
+                (None, ['IN_DELETE'], path + '/20210430_12:00', 'lxd.tar.xz'),
+                (None, ['IN_DELETE'], path + '/20210430_12:00',
                     'rootfs.squashfs')
             ]
             operations = Operations(events, tmpdir)
             assert len(operations.ops) == 1
             assert any(
-                Operation(path + '/20180710_12:00',
+                Operation(path + '/20210430_12:00',
                           OperationType.DELETE, tmpdir) == k
                 for k in operations.ops)
 
@@ -123,7 +123,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             events = [
@@ -139,12 +139,12 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             events = [
                 (None, ['IN_DELETE'], path, 'lxd.tar.xz'),
                 (None, ['IN_DELETE'], path, 'rootfs.squashfs'),
                 (None, ['IN_ISDIR', 'IN_DELETE'], str(Path(path).parent),
-                    '20180710_12:00'),
+                    '20210430_12:00'),
                 (None, ['IN_ISDIR', 'IN_DELETE'],
                     str(Path(path).parent.parent), 'default')
             ]
@@ -158,7 +158,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default'))
+                Path(tmpdir, 'iats/focal/amd64/default'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             Path(path, 'rootfs.squashfs').touch()
@@ -173,17 +173,17 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             other_path = str(
-                Path(tmpdir, 'iats/xenial/amd64/other/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/other/20210430_12:00'))
             os.makedirs(other_path)
             Path(other_path, 'lxd.tar.xz').touch()
             Path(other_path, 'rootfs.squashfs').touch()
             events = [
                 (None, ['IN_ISDIR', 'IN_MOVED_FROM'], str(Path(path).parent),
-                    '20180710_12:00'),
+                    '20210430_12:00'),
                 (None, ['IN_ISDIR', 'IN_MOVED_TO'],
-                    str(Path(other_path).parent), '20180710_12:00')
+                    str(Path(other_path).parent), '20210430_12:00')
             ]
             operations = Operations(events, tmpdir)
 
@@ -198,9 +198,9 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default'))
+                Path(tmpdir, 'iats/focal/amd64/default'))
             other_path = str(
-                Path(tmpdir, 'iats/xenial/amd64/other/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/other/20210430_12:00'))
             os.makedirs(other_path)
             Path(other_path, 'lxd.tar.xz').touch()
             Path(other_path, 'rootfs.squashfs').touch()
@@ -222,9 +222,9 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default'))
+                Path(tmpdir, 'iats/focal/amd64/default'))
             other_path = str(
-                Path(tmpdir, 'iats/xenial/amd64/other'))
+                Path(tmpdir, 'iats/focal/amd64/other'))
             os.makedirs(other_path)
             events = [
                 (None, ['IN_ISDIR', 'IN_MOVED_FROM'],
@@ -241,7 +241,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             events = [
@@ -257,7 +257,7 @@ class TestOperations(object):
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             path = str(
-                Path(tmpdir, 'iats/xenial/amd64/default/20180710_12:00'))
+                Path(tmpdir, 'iats/focal/amd64/default/20210430_12:00'))
             os.makedirs(path)
             Path(path, 'lxd.tar.xz').touch()
             Path(path, 'rootfs.squashfs').touch()

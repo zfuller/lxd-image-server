@@ -15,12 +15,12 @@ INDEX = {
     'datatype': 'image-downloads',
     'format': 'products:1.0',
     'products': {
-        'ubuntu:xenial:amd64:default': {
+        'ubuntu:focal:amd64:default': {
             'arch': 'amd64',
             'os': 'ubuntu',
-            'release': 'xenial',
-            'release_title': 'xenial',
-            'aliases': 'ubuntu/xenial/amd64/default',
+            'release': 'focal',
+            'release_title': 'focal',
+            'aliases': 'ubuntu/focal/amd64/default',
             'versions': {
                 '20180620_12:18': {
                     'items': {
@@ -30,7 +30,7 @@ INDEX = {
                                 '14c29b7eaf68089d1039c6e55384c',
                             'ftype': 'squashfs',
                             'size': 32, 'path':
-                                'images/ubuntu/xenial/amd64/default/2018062'
+                                'images/ubuntu/focal/amd64/default/2018062'
                                 '0_12:18/rootfs.squashfs'
                         },
                         'lxd.tar.xz': {
@@ -42,7 +42,7 @@ INDEX = {
                             'combined_sha256':
                                 'f3cb81db18dfc60c9ce1ffc07b5614549dc22'
                                 '22890254ba4ccf2469f58e57a5d',
-                            'path': 'images/ubuntu/xenial/amd64/default/2018'
+                            'path': 'images/ubuntu/focal/amd64/default/2018'
                                 '0620_12:18/lxd.tar.xz'
                         }
                     }
@@ -62,7 +62,7 @@ EXTRA = {
                     '14c29b7eaf68089d1039c6e55384c',
                 'ftype': 'squashfs',
                 'size': 32, 'path':
-                    'images/ubuntu/xenial/amd64/default/2018062'
+                    'images/ubuntu/focal/amd64/default/2018062'
                     '0_12:28/rootfs.squashfs'
             },
             'lxd.tar.xz': {
@@ -74,7 +74,7 @@ EXTRA = {
                 'combined_sha256':
                     'f3cb81db18dfc60c9ce1ffc07b5614549dc22'
                     '22890254ba4ccf2469f58e57a5d',
-                'path': 'images/ubuntu/xenial/amd64/default/2018'
+                'path': 'images/ubuntu/focal/amd64/default/2018'
                     '0620_12:28/lxd.tar.xz'
             }
         }
@@ -85,7 +85,7 @@ EXTRA = {
 class TestImages(object):
 
     def _generate_files(self, version, tmpdir):
-        work_dir = os.path.join(tmpdir, 'ubuntu', 'xenial',
+        work_dir = os.path.join(tmpdir, 'ubuntu', 'focal',
                                 'amd64', 'default', version)
         os.makedirs(work_dir)
         lxd = open(os.path.join(work_dir, 'lxd.tar.xz'), 'w')
@@ -102,7 +102,7 @@ class TestImages(object):
             self._generate_files('20180620_12:18', tmpdir)
             extra_dir = self._generate_files('20180620_12:28', tmpdir)
             new_index = copy.deepcopy(INDEX)
-            new_index['products']['ubuntu:xenial:amd64:default'][
+            new_index['products']['ubuntu:focal:amd64:default'][
                 'versions'].update(EXTRA)
 
             with open(str(Path(tmpdir, 'images.json')), 'w') as image_file:
@@ -117,16 +117,16 @@ class TestImages(object):
             ])
 
             assert '20180620_12:28' in images.root['products'][
-                'ubuntu:xenial:amd64:default']['versions']
+                'ubuntu:focal:amd64:default']['versions']
             assert '20180620_12:18' in images.root['products'][
-                'ubuntu:xenial:amd64:default']['versions']
+                'ubuntu:focal:amd64:default']['versions']
 
     @patch('lxd_image_server.simplestreams.images.Index')
     def test_delete_files(self, mock_index):
         with tempfile.TemporaryDirectory() as tmpdir:
             work_dir = self._generate_files('20180620_12:18', tmpdir)
             new_index = copy.deepcopy(INDEX)
-            new_index['products']['ubuntu:xenial:amd64:default'][
+            new_index['products']['ubuntu:focal:amd64:default'][
                 'versions'].update(EXTRA)
             with open(str(Path(tmpdir, 'images.json')), 'w') as image_file:
                 json.dump(new_index, image_file)
@@ -144,9 +144,9 @@ class TestImages(object):
     def test_delete_all_files(self, mock_index):
         with tempfile.TemporaryDirectory() as tmpdir:
             work_dir = str(
-                Path(tmpdir, 'ubuntu/xenial/amd64/default/20180620_12:18'))
+                Path(tmpdir, 'ubuntu/focal/amd64/default/20180620_12:18'))
             new_index = copy.deepcopy(INDEX)
-            del new_index['products']['ubuntu:xenial:amd64:default']
+            del new_index['products']['ubuntu:focal:amd64:default']
 
             with open(str(Path(tmpdir, 'images.json')), 'w') as image_file:
                 json.dump(new_index, image_file)
@@ -169,9 +169,9 @@ class TestImages(object):
                 json.dump(INDEX, image_file)
 
             new_index = copy.deepcopy(INDEX)
-            new_index['products']['ubuntu:xenial:amd64:default'][
+            new_index['products']['ubuntu:focal:amd64:default'][
                 'versions'].update(EXTRA)
-            del new_index['products']['ubuntu:xenial:amd64:default'][
+            del new_index['products']['ubuntu:focal:amd64:default'][
                 'versions']['20180620_12:18']
             images = Images(tmpdir)
             images.update([
@@ -185,15 +185,15 @@ class TestImages(object):
                     tmpdir)
             ])
             assert '20180620_12:28' in images.root['products'][
-                'ubuntu:xenial:amd64:default']['versions']
+                'ubuntu:focal:amd64:default']['versions']
             assert '20180620_12:18' not in images.root['products'][
-                'ubuntu:xenial:amd64:default']['versions']
+                'ubuntu:focal:amd64:default']['versions']
 
     @patch('lxd_image_server.simplestreams.images.Index')
     def test_move_root(self, mock_index):
         with tempfile.TemporaryDirectory() as tmpdir:
             work_dir = self._generate_files('20180620_12:18', tmpdir)
-            other_dir = os.path.join(tmpdir, 'ubuntu', 'xenial',
+            other_dir = os.path.join(tmpdir, 'ubuntu', 'focal',
                                      'amd64', 'other')
             shutil.move(str(Path(work_dir).parent), other_dir)
 
@@ -211,5 +211,5 @@ class TestImages(object):
                     OperationType.DELETE,
                     tmpdir, True)
             ])
-            assert 'ubuntu:xenial:amd64:default' not in images.root['products']
-            assert 'ubuntu:xenial:amd64:other' in images.root['products']
+            assert 'ubuntu:focal:amd64:default' not in images.root['products']
+            assert 'ubuntu:focal:amd64:other' in images.root['products']

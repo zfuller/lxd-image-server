@@ -30,7 +30,7 @@ case "$1" in
       fi
 
       if [ ! -d "/var/www/simplestreams" ];then
-          mkdir /var/www/simplestreams
+          mkdir -p /var/www/simplestreams
       fi
 
       fix_permissions

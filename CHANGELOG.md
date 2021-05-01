@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.0.5 (2021-04-28)
+
+  * Update Dockerfile for ubuntu focal
+  * update .gitignore
+  * update nginx config file
+  * updates package building scripts
 
 ### 0.0.4 (2021-01-25)
 
@@ -12,4 +18,3 @@
 ### 0.0.1 (2018-06-15)
 
   * Initial release.
-
